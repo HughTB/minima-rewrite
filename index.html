@@ -7,23 +7,51 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
     </style>
     <style>
-        
+        body {
+            background-color: #202225;
+            font-family: 'Noto Sans', sans-serif;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            padding-top: 10%;
+            padding-bottom: 2%;
+        }
+
+        input {
+            border: 2px solid rgba(134,53,227,1);
+            border-radius: 10px;
+            font-size: x-large;
+            background-color: #202225;
+            color: white;
+            width: 25%;
+        }
+
+        button {
+            border: 2px solid rgba(134,53,227,1);
+            border-radius: 10px;
+            font-size: x-large;
+            background-color: #202225;
+            color: white
+        }
     </style>
 </head>
 <body>
     <h1>Minima URL Shortener</h1>
-    <input type="text" placeholder="url" id="inputbox">
+    <input type="text" placeholder="URL goes here" id="inputbox">
     <button onclick="shorten()">Go</button>
     <h2><a id="link"></a></h2>
 
     <script>
         function shorten() {
-            fetch(`https://localhost:7212/${document.getElementById("inputbox").value}`, {
+            fetch(`https://minima.hughtb.uk/${encodeURIComponent(document.getElementById("inputbox").value)}`, {
                 method: "POST",
             }).then(response => {
-                console.log(response);
-                document.getElementById("link").append(document.createTextNode(response.value));
-                document.getElementById("link").href = response.value;
+                response.json().then(json => {
+                    document.getElementById("link").innerHTML = json;
+                    document.getElementById("link").href = json;
+                });
             });
         }
     </script>

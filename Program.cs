@@ -1,4 +1,5 @@
 using System.Web;
+using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +31,14 @@ catch (Exception ex)
     Console.WriteLine(ex.Message);
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    });
+}
 
 app.MapGet("/", () =>
 {
@@ -61,7 +69,9 @@ app.MapPost("/{url}", (string url) =>
 {
     try
     {
-        string id = "";
+        url = (url.StartsWith("http://") || url.StartsWith("https://")) ? url : $"http://{url}";
+
+        string id = RandomID();
 
         if (urlDict.ContainsValue(url))
         {
@@ -69,7 +79,7 @@ app.MapPost("/{url}", (string url) =>
         }
         else
         {
-            while (!urlDict.ContainsKey(id) && id != "")
+            while (urlDict.ContainsKey(id))
             {
                 id = RandomID();
             }
@@ -79,7 +89,7 @@ app.MapPost("/{url}", (string url) =>
 
             addedSinceSave++;
 
-            if (addedSinceSave >= 10)
+            if (addedSinceSave >= 5)
             {
                 SaveDict(urlDict, dictPath);
             }
@@ -114,11 +124,6 @@ string RandomID()
     }
 
     return id;
-}
-
-string GetKeyFromValue(string value)
-{
-    return urlDict.ToDictionary(pair => pair.Value, pair => pair.Key)[value];
 }
 
 bool LoadDict(out Dictionary<string, string>? dict, string filepath)
