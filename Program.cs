@@ -69,7 +69,7 @@ app.MapPost("/{url}", (string url) =>
 {
     try
     {
-        url = (url.StartsWith("http://") || url.StartsWith("https://")) ? url : $"http://{url}";
+        url = (HttpUtility.UrlDecode(url).StartsWith("http://") || HttpUtility.UrlDecode(url).StartsWith("https://")) ? url : $"http://{url}";
 
         string id = RandomID();
 
