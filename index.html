@@ -26,6 +26,7 @@
             background-color: #202225;
             color: white;
             width: 25%;
+            min-width: 300px;
         }
 
         button {
@@ -33,7 +34,17 @@
             border-radius: 10px;
             font-size: x-large;
             background-color: #202225;
-            color: white
+            color: white;
+            cursor: pointer;
+        }
+
+        #link {
+            color: white;
+        }
+
+        #link:hover {
+            color: rgba(134,53,227,1);
+            transition: 0.25s;
         }
     </style>
 </head>
@@ -51,6 +62,7 @@
                 response.json().then(json => {
                     document.getElementById("link").innerHTML = json;
                     document.getElementById("link").href = json;
+                    navigator.clipboard.writeText(json);
                 });
             });
         }
